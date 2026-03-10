@@ -1,0 +1,10 @@
+{
+ "metrics": {
+  "http_req_duration": {
+   "avg": 300
+  },
+  "http_req_failed": {
+   "rate": 0.01
+  }
+ }
+}
