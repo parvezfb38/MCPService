@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 
-# Load environment variables from .env
+# Load environment variables
 load_dotenv()
 
 # Get OpenAI API key
@@ -22,29 +22,35 @@ def generate_ai_report(data):
     prompt = f"""
 You are an AI performance engineer.
 
-Analyze this performance regression data and provide:
+Analyze the following performance regression data.
+
+Provide:
 
 1. Issue summary
 2. Possible root cause
-3. Recommendations to fix it
+3. Recommendations for engineers
 
 Performance Data:
 {data}
 """
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "You are a senior performance engineer."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.2
-    )
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a senior performance engineer."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.2
+        )
 
-    return response.choices[0].message.content
+        return response.choices[0].message.content
+
+    except Exception as e:
+        return f"AI Report Error: {str(e)}"
 
 
-# Sample regression data (from k6 parser)
+# Sample regression data
 sample_data = {
     "previous_latency": 300,
     "current_latency": 480,

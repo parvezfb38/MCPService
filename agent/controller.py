@@ -1,6 +1,7 @@
 import requests
 import os
 from dotenv import load_dotenv
+from analysis import analyze_results
 
 load_dotenv()
 
@@ -8,8 +9,10 @@ MCP_URL = os.getenv("MCP_URL")
 TOKEN = os.getenv("TOKEN")
 
 headers = {
-    "Authorization": f"Bearer {TOKEN}"
+    "Authorization": f"Bearer {TOKEN}",
+    "Content-Type": "application/json"
 }
+
 
 def call_tool(tool):
 
@@ -17,14 +20,19 @@ def call_tool(tool):
         "tool": tool
     }
 
-    r = requests.post(MCP_URL, json=body, headers=headers)
+    try:
+        r = requests.post(MCP_URL, json=body, headers=headers)
+        return r.json()
 
-    return r.json()
+    except Exception as e:
+        return {"error": str(e)}
 
 
 def run_performance_analysis():
 
-    # Run performance tools
+    print("\nStarting Performance Tests\n")
+
+    # Run tools
     k6 = call_tool("k6_test")
     speedcurve = call_tool("speedcurve")
 
@@ -36,6 +44,17 @@ def run_performance_analysis():
 
     print("\nPerformance Analysis Result\n")
     print(data)
+
+    print("\nRunning AI Root Cause Analysis...\n")
+
+    try:
+        ai_report = analyze_results(data)
+
+        print("\nAI RCA Result\n")
+        print(ai_report)
+
+    except Exception as e:
+        print("AI Analysis Error:", e)
 
 
 if __name__ == "__main__":

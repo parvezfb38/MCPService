@@ -1,23 +1,27 @@
 import os
 from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 
 def analyze_results(data):
 
     prompt = f"""
-You are a performance engineer AI.
+You are a senior performance engineer AI.
 
-Analyze this performance data and detect regression.
+Analyze the following performance testing results.
 
 Data:
 {data}
 
-Explain:
-1) Is there regression?
-2) What is the possible root cause?
-3) What should engineers fix?
+Tasks:
+1. Detect if there is a performance regression.
+2. Identify possible root causes.
+3. Suggest what engineers should fix.
+
+Provide a clear explanation in natural language.
 """
 
     response = client.chat.completions.create(
